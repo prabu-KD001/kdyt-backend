@@ -22,7 +22,7 @@ cfg = get_settings()
 
 origins_list = [
     "http://localhost:5173",
-    "https://kdyt.vercel.app"
+    "https://kdyt-frontend.vercel.app/"
 ]
 
 # ── App factory ───────────────────────────────────────────────────
