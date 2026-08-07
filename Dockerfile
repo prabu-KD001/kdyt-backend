@@ -45,7 +45,7 @@ RUN useradd -m appuser \
 
 USER appuser
 
-EXPOSE 10000
+EXPOSE 8000
 
 # Env vars to set on Render (do NOT hardcode secrets here):
 #   YTDLP_COOKIES_B64          — base64-encoded cookies.txt content
@@ -55,4 +55,4 @@ CMD ["sh", "-c", "\
     node /bgutil/server/build/main.js & \
     sleep 3 && \
     yt-dlp -U --quiet && \
-    uvicorn main:app --host 0.0.0.0 --port 10000"]
+    uvicorn main:app --host 0.0.0.0 --port \"${PORT:-10000}\""]

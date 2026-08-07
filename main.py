@@ -90,7 +90,7 @@ if os.path.isdir(_DIST):
         name="static-assets",
     )
 
-    @app.get("/{full_path:path}", include_in_schema=False)
+    @app.get("/{full_path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     async def spa_fallback(full_path: str):
         index = os.path.join(_DIST, "index.html")
         if os.path.isfile(index):
@@ -98,7 +98,7 @@ if os.path.isdir(_DIST):
         return JSONResponse({"detail": "Frontend not found."}, status_code=404)
 
 else:
-    @app.get("/", include_in_schema=False)
+    @app.get("/", methods=["GET", "HEAD"], include_in_schema=False)
     async def root():
         return JSONResponse({
             "message": "KDYT API is running.",
