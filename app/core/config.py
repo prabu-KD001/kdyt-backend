@@ -9,8 +9,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
 
+import tempfile
+
 # Path where we write cookies decoded from the env-var
-_RUNTIME_COOKIES_PATH = "/tmp/yt_cookies.txt"
+_RUNTIME_COOKIES_PATH = os.path.join(tempfile.gettempdir(), "yt_cookies.txt")
 
 
 def write_cookies_from_env() -> str | None:

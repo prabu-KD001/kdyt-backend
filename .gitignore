@@ -6,3 +6,4 @@ venv/
 node_modules
 cookies.txt
 ffmpeg.exe
+encoded_cookies_b64.txt

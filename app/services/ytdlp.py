@@ -1,4 +1,4 @@
-﻿# services/ytdlp.py
+# services/ytdlp.py
 
 import asyncio
 import json
@@ -33,8 +33,8 @@ _STATIC_AUDIO_FORMATS: list[VideoFormat] = [
 
 def _base_args() -> list[str]:
     """
-    bgutil-ytdlp-pot-provider plugin auto-supplies PO tokens via HTTP server
-    running on 127.0.0.1:4416 — no manual extractor-args needed.
+    Construct base yt-dlp arguments including client fallback strategies,
+    automatic cookies attachment, and optional proxy configurations.
     """
     cfg = get_settings()
     args = [
@@ -42,20 +42,22 @@ def _base_args() -> list[str]:
         "--no-warnings",
         "--add-header",
         "User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-        "--extractor-args", "youtube:player_client=android",
-        "--sleep-interval", "3",
-        "--max-sleep-interval", "6",
+        "--extractor-args", "youtube:player_client=mweb,android,ios,web",
+        "--sleep-interval", "1",
+        "--max-sleep-interval", "3",
     ]
-     # optional cookies
-    if getattr(cfg, "use_cookies", False) and cfg.resolved_cookies_file:
+
+    # Automatically attach cookies if available via env var (b64), explicit file path, or bundled file
+    if cfg.resolved_cookies_file and os.path.isfile(cfg.resolved_cookies_file):
         args += ["--cookies", cfg.resolved_cookies_file]
+    elif cfg.ytdlp_cookies_browser:
+        args += ["--cookies-from-browser", cfg.ytdlp_cookies_browser]
+
+    if cfg.ytdlp_proxy:
+        args += ["--proxy", cfg.ytdlp_proxy]
 
     return args
-    # if cfg.resolved_cookies_file and os.path.isfile(cfg.resolved_cookies_file):
-    #     args += ["--cookies", cfg.resolved_cookies_file]
-    # if cfg.ytdlp_proxy:
-    #     args += ["--proxy", cfg.ytdlp_proxy]
-    # return args
+
 
 
 async def _run(*args: str, timeout: int | None = None) -> str:
