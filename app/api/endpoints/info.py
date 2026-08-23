@@ -46,12 +46,19 @@ async def get_info(
         if "age" in msg_lower and "restricted" in msg_lower:
             raise HTTPException(status_code=400, detail="Age-restricted videos are not supported.")
 
-        # Show the real yt-dlp error so it's visible in the UI for debugging
+        if "sign in to confirm you" in msg_lower or "use --cookies" in msg_lower:
+            raise HTTPException(
+                status_code=400,
+                detail="YouTube Bot Check: Sign in to confirm you're not a bot. Server requires YTDLP_COOKIES_B64 env variable on Render.",
+            )
+
+        # Use 400 instead of 502 so Render reverse proxy never intercepts or replaces JSON error responses
         detail = f"yt-dlp error: {msg[:500]}" if msg else (
             "YouTube is blocking requests from this server. "
-            "Make sure yt-dlp is up to date: pip install -U yt-dlp"
+            "Make sure YTDLP_COOKIES_B64 is set on Render."
         )
-        raise HTTPException(status_code=502, detail=detail)
+        raise HTTPException(status_code=400, detail=detail)
+
 
     except TimeoutError:
         raise HTTPException(status_code=504, detail="Request timed out. Please try again.")

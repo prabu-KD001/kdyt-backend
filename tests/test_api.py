@@ -75,10 +75,11 @@ class TestGetInfo:
         assert len(data["audio_formats"]) == 3
 
     @patch("app.api.endpoints.info.ytdlp.get_video_info", new_callable=AsyncMock)
-    def test_returns_502_on_ytdlp_runtime_error(self, mock_get_info):
+    def test_returns_400_on_ytdlp_runtime_error(self, mock_get_info):
         mock_get_info.side_effect = RuntimeError("yt-dlp error")
         res = client.get(f"/api/info?url={VALID_URL}")
-        assert res.status_code == 502
+        assert res.status_code == 400
+
 
     @patch("app.api.endpoints.info.ytdlp.get_video_info", new_callable=AsyncMock)
     def test_returns_400_for_private_video(self, mock_get_info):
